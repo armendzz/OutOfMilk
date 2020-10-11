@@ -1,0 +1,33 @@
+// NativeScript core theme
+// @see https://docs.nativescript.org/ui/theme
+@import "~@nativescript/theme/core";
+@import "~@nativescript/theme/blue";
+@import "~@nativescript/theme/core.compat";
+
+// Override variables here
+
+// Global SCSS styling
+// @see https://docs.nativescript.org/ui/styling
+
+
+#tap {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        text-align: center;
+        width: 20%;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 50%;
+    }
+
+
+.google-font {
+    font-size: var(--const-font-size);
+    font-family: "SansitaSwashed-Bold";
+}
+
+.btn {
+    font-size: 30;
+}
