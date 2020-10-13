@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Lista;
+use App\Http\Resources\ListaResources;
 use Illuminate\Http\Request;
+use App\Models\Store;
+use App\Http\Resources\StoreResources;
+use Illuminate\Http\Response;
 
-class CategoryController extends Controller
+class StoreController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +17,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $dat = Store::all();
+        // return response($dat, 200);
+       dd($dat);
+
+        // return StoreResources::collection(Store::all());
     }
 
     /**
@@ -23,7 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+
+
     }
 
     /**
@@ -34,7 +43,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Store::create($request->all());
+
+        return response([])->status();
     }
 
     /**
@@ -45,7 +56,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+
+       return ListaResources::collection(Lista::where('store_id', $id)->get());
     }
 
     /**

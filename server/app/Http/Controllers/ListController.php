@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use Response;
+
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Lista;
+use App\Models\Lista;
+use App\Http\Resources\ListaResources;
+use Illuminate\Http\Response;
 
 class ListController extends Controller
 {
@@ -15,18 +16,13 @@ class ListController extends Controller
      */
     public function index()
     {
-        
-        return new Lista($somedata);;
-    }
+        $dat = Lista::all();
+        // return response($dat, 200);
+        return ListaResources::collection(Lista::all());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+
+        // Lista::all(); // response(['name' => 'Abigail', 'state' => 'CA'])->status();
+
     }
 
     /**
@@ -37,7 +33,10 @@ class ListController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        Lista::create($request->all());
+
+        return response([])->status();
     }
 
     /**
@@ -48,18 +47,7 @@ class ListController extends Controller
      */
     public function show($id)
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
