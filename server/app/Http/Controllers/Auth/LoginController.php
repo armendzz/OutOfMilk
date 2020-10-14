@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -37,4 +39,19 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+     public function apiLogin( Request $request){
+        $login = $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string'
+        ]);
+
+        if(!Auth::attempt( $login)){
+            return response(['message' => 'Invalid login credentials']);
+        }
+
+        $accessToken = Auth::user()->createToken('authToken')->accessToken;
+        return response(['user' => Auth::user(), 'access_token' => $accessToken]);
+
+     }
 }

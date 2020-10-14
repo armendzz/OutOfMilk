@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Store extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'user_id'];
 
     public function lista() {
         return $this->hasMany(Lista::class);
+    }
+
+    public function userr() {
+        return $this->belongsTo(User::class);
     }
 }

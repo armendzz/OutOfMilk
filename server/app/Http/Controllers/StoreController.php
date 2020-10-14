@@ -19,9 +19,8 @@ class StoreController extends Controller
     {
         $dat = Store::all();
         // return response($dat, 200);
-       dd($dat);
 
-        // return StoreResources::collection(Store::all());
+         return StoreResources::collection(Store::all());
     }
 
     /**
@@ -43,9 +42,13 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
-        Store::create($request->all());
+        $store = new Store;
+        $store->name = $request['name'];
+        $store->user_id =  $request->user()['id'];
+        $store->save();
+     //   Store::create($request->all());
 
-        return response([])->status();
+        return response(['message' => 'store created' ]);  //add ->status();
     }
 
     /**

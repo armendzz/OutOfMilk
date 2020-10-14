@@ -17,6 +17,7 @@ class Listas extends Migration
             $table->increments('id')->unique();
             $table->string('title');
             $table->integer('store_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->boolean('completed')->default(0);
             $table->timestamps();
           });

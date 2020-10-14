@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -69,5 +70,26 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+
     }
+
+
+    public function apiRegister( Request $request){
+     $register = [
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password'])];
+
+        if(!User::create( $register)){
+            return response(['message' => 'Invalid login credentials']);
+        }
+
+
+        $user = User::where('email', $register['email']) -> first();;
+
+        $accessToken = $user->createToken('authToken')->accessToken;
+        return response(['user' => $register['name'], 'email' => $register['email'], 'access_token' => $accessToken]);
+
+     }
 }

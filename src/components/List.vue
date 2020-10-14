@@ -1,5 +1,6 @@
 <template>
-    <Page actionBarHidden="true">
+    <Page>
+        <ActionBar :title="storeName" />
         <StackLayout height="100%">
             <FlexboxLayout  height="90%" flexDirection="column">
       
@@ -32,22 +33,34 @@ import axios from 'axios';
 import * as http from "http";
 const httpModule = require("tns-core-modules/http");
 const dialogs = require('tns-core-modules/ui/dialogs')
-
+const appSettings = require("tns-core-modules/application-settings");
 
 
 
 export default {
+      props: ['storeId', 'storeName'],
      data() {
        return {
-           listOfItems: []
+           listOfItems: [],
+            access_token: '',
        }
    },
+
+
    mounted() {
-         http.getJSON("http://10.0.2.2:8000/api/list").then(result => {
-          this.listOfItems = result.data;
-            }, error => {
-                console.log(error);
-            });
+
+                this.access_token = appSettings.getString('access_token');
+                  http.request({
+                    url: "http://10.0.2.2:8000/api/store/" + this.storeId,
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    console.log(result);
+                    this.listOfItems = result.data;
+                }, error => {
+                    console.error(error);
+                });
   }, 
   methods: {
       addItmess(){
@@ -65,10 +78,11 @@ export default {
                         headers: { "Content-Type": "application/json" },
                         content: JSON.stringify({
                             title: result.text,
+                            store_id: this.storeId
                         })
                     }).then((response) => {
                         const result = response.content.toJSON();
-                        http.getJSON("http://10.0.2.2:8000/api/list").then(result => {
+                        http.getJSON("http://10.0.2.2:8000/api/store/" + this.storeId).then(result => {
                             this.listOfItems = result.data;
                                 }, error => {
                                     console.log(error);

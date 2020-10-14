@@ -16,9 +16,14 @@ class Lista extends Model
         'title',
         'completed',
         'store_id',
+        'user_id',
     ];
 
     public function storee() {
         return $this->belongsTo(Store::class);
+    }
+
+    public function userr() {
+        return $this->belongsTo(User::class);
     }
 }
