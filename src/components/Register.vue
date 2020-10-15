@@ -45,7 +45,8 @@ export default {
                 password: "",
                 confirmPassword: ""
 			},
-			access_token: ''
+			access_token: '',
+			isLoggedIn: ''
        }
    },
      
@@ -64,11 +65,10 @@ export default {
                     }).then((response) => {
                         const result = response.content.toJSON();
 						appSettings.setString('access_token', result.access_token);
+						appSettings.setBoolean("isLoggedIn", true);
                     }, (e) => {
                         console.log(e);
                     });               
-
-           
         }
    },
 };

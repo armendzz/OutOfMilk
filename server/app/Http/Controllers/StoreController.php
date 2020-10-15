@@ -44,7 +44,7 @@ class StoreController extends Controller
     {
         $store = new Store;
         $store->name = $request['name'];
-        $store->user_id =  $request->user()['id'];
+        $store->user_id = $request->user()['id'];
         $store->save();
      //   Store::create($request->all());
 

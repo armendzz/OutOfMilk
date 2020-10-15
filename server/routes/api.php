@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\StoreController;
@@ -22,8 +24,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Auth::routes();
 
-Route::post('/apilogin', [App\Http\Controllers\auth\LoginController::class, 'apiLogin']);
-Route::post('/apiregister', [App\Http\Controllers\auth\RegisterController::class, 'apiRegister']);
+Route::post('/apilogin', [LoginController::class, 'apiLogin']);
+Route::post('/apiregister', [RegisterController::class, 'apiRegister'])->name('apiRegister');;
 /*
 Route::apiResource('/list', ListController::class);
 Route::apiResource('/store', StoreController::class);
