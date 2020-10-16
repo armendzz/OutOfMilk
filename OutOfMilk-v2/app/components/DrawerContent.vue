@@ -2,8 +2,8 @@
     <GridLayout rows="auto, *" class="nt-drawer__content">
         <StackLayout row="0" class="nt-drawer__header">
             <Image class="nt-drawer__header-image fas t-36" src.decode="font://&#xf2bd;"/>
-            <Label class="nt-drawer__header-brand" text="User Name"/>
-            <Label class="nt-drawer__header-footnote" text="username@mail.com"/>
+            <Label class="nt-drawer__header-brand" :text="userName"/>
+            <Label class="nt-drawer__header-footnote" :text="userEmail"/>
         </StackLayout>
 
         <ScrollView row="1" class="nt-drawer__body">
@@ -41,7 +41,7 @@
                 <GridLayout columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Settings' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Settings)">
-                    <Label col="0" text.decode="&#xf013;" class="nt-icon fas"/>
+                    <Label col="0" text="&#xf2bb" class="fontAwesomeIconsandro"/>
                     <Label col="1" text="Settings" class="p-r-10"/>
                 </GridLayout>
               <StackLayout class="hr"/>
@@ -57,6 +57,7 @@
   import Browse from "./Browse";
   import Login from "./Login";
   import Featured from "./Featured";
+   import * as http from "http";
   import Search from "./Search";
   import Settings from "./Settings";
   import * as utils from "~/shared/utils";
@@ -64,21 +65,37 @@
   const appSettings = require("tns-core-modules/application-settings");
 
   export default {
-    mounted() {
-      SelectedPageService.getInstance().selectedPage$
-        .subscribe((selectedPage) => this.selectedPage = selectedPage);
-    },
-    data() {
+      data() {
       return {
         Home: Home,
         Browse: Browse,
         Featured: Featured,
         Search: Search,
         Settings: Settings,
-        selectedPage: ""
+        selectedPage: "",
+        userName: '',
+        userEmail: '',
+        access_token: ''
       };
     },
-    components: {
+    mounted() {
+      SelectedPageService.getInstance().selectedPage$
+        .subscribe((selectedPage) => this.selectedPage = selectedPage);
+
+         this.access_token = appSettings.getString('access_token'); 
+                  http.request({
+                    url: "http://10.0.2.2:8000/api/user/",
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.userName = result.name
+                    this.userEmail = result.email                    
+                }, error => {
+                    console.error(error);
+                });
+    },
+      components: {
       Home,
       Login,
       Browse,

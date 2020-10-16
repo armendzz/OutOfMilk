@@ -3,12 +3,9 @@
         <StackLayout ~drawerContent backgroundColor="#ffffff">
             <slot name="drawerContent"/>
         </StackLayout>
-        <Frame v-if="isLoggedIn === true" ~mainContent ref="drawerMainContent">
+        <Frame ~mainContent ref="drawerMainContent">
            <slot name="mainContent"/> 
         </Frame>
-        <Frame v-else ~mainContent ref="drawerMainContent">
-            <slot name="loginContent"/>
-        </Frame> 
     </RadSideDrawer>
 </template>
 
@@ -20,16 +17,11 @@
     data() {
       return {
       transition: new SlideInOnTopTransition(),
-      access_token: '',
-      isLoggedIn: Boolean,
-       
       }
     },
     
     mounted(){
-      this.access_token = appSettings.getString('access_token');
-      this.isLoggedIn = appSettings.hasKey('access_token');
-      console.log(this.isLoggedIn)
+     
     },
 
     

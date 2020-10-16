@@ -17,14 +17,18 @@
                         ios.position="left"/>
             <Label class="action-bar-title" text="Home"/>
         </ActionBar>
-
-        <GridLayout class="page__content">
-            <ListView for="item in listOfItems" @itemTap="onItemTap">
-            <v-template>
-              <Label class="itemStore" :text="item" />
-            </v-template>
-          </ListView>
-        </GridLayout>
+         <ScrollView orientation="vertical">
+        <StackLayout orientation="vertical">
+        
+          <DockLayout v-for="store in listOfStores" class="store-list"  stretchLastChild="true" >
+            <Label :text="store.name" :id="store.id" :name="store.name" @tap="onStoreTap($event)" class="storeName" width="65%"  />
+            <Label text="15/34" width="20%" />
+             <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
+          </DockLayout>
+        
+      </StackLayout>
+       </ScrollView>
+     
     </Page>
 </template>
 
@@ -32,19 +36,46 @@
   import * as utils from "~/shared/utils";
   import SelectedPageService from "../shared/selected-page-service";
   import Items from "./Items";
-
+  import Login from "./Login"
+  const appSettings = require("tns-core-modules/application-settings");
+  import * as http from "http";
 
   export default {
     components: {
-      Items
+      Items,
+      Login
+    },
+      
+
+     data() {
+      return {
+        listOfStores: [],
+         access_token: '',
+         isLoggedIn: Boolean,
+      }
+    },
+    beforeMount() {
+      this.access_token = appSettings.getString('access_token');
+      this.isLoggedIn = appSettings.hasKey('access_token');
+      console.log(this.isLoggedIn);
+      if (this.isLoggedIn == false){ this.$navigateTo(Login, {})} 
     },
     mounted() {
-      SelectedPageService.getInstance().updateSelectedPage("Home");
-    },
-    data() {
-      return {
-        listOfItems: ['asd', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas', 'asfdfas']
-      }
+     
+      
+
+      http.request({
+                    url: "http://10.0.2.2:8000/api/store",
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.listOfStores = result.data;
+                }, error => {
+                    console.error(error);
+            });
+       SelectedPageService.getInstance().updateSelectedPage("Home");
+            
     },
     computed: {
       message() {
@@ -55,11 +86,15 @@
       onDrawerButtonTap() {
         utils.showDrawer();
       },
-      onItemTap(){
+      onStoreTap(args){
           this.$navigateTo(Items, { 
-        });
+            props: {
+                    storeId: args.object.id,
+                    storeName: args.object.name,
+            } });
         utils.closeDrawer();
       }
+     
     }
   };
 </script>
@@ -68,11 +103,22 @@
     // Start custom common variables
     @import '~@nativescript/theme/scss/variables/blue';
     // End custom common variables
-  .itemStore {
-    separator-color: white;
-    font-size: 20;
-    font-family: SansitaSwashed-Bold;
-   
+  .menuIcon {
+    vertical-align: center;
+    horizontal-align: center;
+    font-size: 25;
   }
+  
+  .store-list {
+    separator-color: white;
+    font-size: 25;
+    font-family: SansitaSwashed-Bold;
+    border-width: 0 0 3 0;
+    padding: 0 0 10 10;
+    color: cornflowerblue;
+    border-color: rgba(114, 216, 241, 0.767);
+  }
+ 
+
     // Custom styles
 </style>
