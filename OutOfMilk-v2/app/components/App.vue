@@ -12,6 +12,10 @@
 <script>
   import {SlideInOnTopTransition} from 'nativescript-ui-sidedrawer';
   const appSettings = require("tns-core-modules/application-settings");
+  const SecureStorage = require("nativescript-secure-storage").SecureStorage;
+  const secureStorage = new SecureStorage();
+
+
   export default {
 
     data() {
@@ -33,7 +37,7 @@
     },
     
     mounted(){
-     
+      
     },
         
   }

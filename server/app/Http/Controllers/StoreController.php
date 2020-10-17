@@ -18,10 +18,31 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
-
+      
         $user = User::find($request->user()['id']);
-        $store = $user->storee()->get();
-        return StoreResources::collection($store);
+        $stores = $user->storee()->with('lista')->withCount('lista')->get();
+        $dyqanet = array();
+        foreach($stores as $store){
+            $i = 0;
+            $store->unCompleted = $i;
+
+            foreach($store['lista'] as $item) {
+                if($item['completed'] == 0){
+                    $store->unCompleted = $i++;
+                }
+             }
+            array_push($dyqanet, $store);
+           
+        }  
+        error_log("==================================================");
+            error_log($dyqanet[0]);
+
+          // return response(['data' =>  $dyqanet]);
+           return  response()->json([
+           'data' => $dyqanet,
+        // return StoreResources::collection($dyqanet); 
+        ]);
+       // return StoreResources::collection($dyqanet); 
     }
 
     /**

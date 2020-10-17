@@ -18,7 +18,9 @@
         <v-template>
          <DockLayout class="item-list"  stretchLastChild="true">
              <Label :text="store.name" :id="store.id" :name="store.name" class="storeName" width="65%"  />
-             <Label text="15/34" width="20%" />
+             <Label :text="store.unCompleted" width="9%" />
+             <Label text="/" width="9%" />
+             <Label :text="store.lista.length" width="9%" />
              <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
           </DockLayout> 
         </v-template>
@@ -56,7 +58,11 @@
     },
     beforeMount() {
      
-      this.access_token = appSettings.getString('access_token');
+    
+    },
+    mounted() {
+
+        this.access_token = appSettings.getString('access_token');
       this.isLoggedIn = appSettings.hasKey('access_token');
       console.log(this.isLoggedIn);
       if (this.isLoggedIn == false){ this.$navigateTo(Login, {})} 
@@ -71,11 +77,10 @@
                 }, error => {
                     console.error(error);
             });
-    },
-    mounted() {
-  
+
+      
        SelectedPageService.getInstance().updateSelectedPage("Home");
-        console.log('home mounted')
+      
             
     },
     computed: {
@@ -99,7 +104,6 @@
                 }, error => {
                     console.error(error);
             });
-            
 
     },
       onDrawerButtonTap() {

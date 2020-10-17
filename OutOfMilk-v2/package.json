@@ -38,6 +38,7 @@
     "nativescript": "^7.0.10",
     "nativescript-localstorage": "^2.0.1",
     "nativescript-pulltorefresh": "^2.3.0",
+    "nativescript-secure-storage": "^2.6.2",
     "nativescript-socketio": "^3.3.1",
     "nativescript-toasty": "^3.0.0-alpha.2",
     "nativescript-ui-listview": "^9.0.2",
