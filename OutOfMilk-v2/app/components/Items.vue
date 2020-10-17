@@ -13,14 +13,15 @@
         <StackLayout  orientation="vertical">
        <RadListView ref="listView" pullToRefresh="true" @pullToRefreshInitiated="onPullToRefreshInitiated" height="90%"
                    for="item in listOfItems"
-                   @itemTap="onItemTap"
                    >
         <v-template>
          <DockLayout class="item-list"  stretchLastChild="true" >
-              <Label text.decode="&#xf14a;" class="nt-icon far menuIcon" width="10%"/>
-            <Label :text="item.title" :id="item.id" :name="item.title"  class="storeName" width="65%"  /> 
-             <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
-              </DockLayout> 
+          <Label v-if="item.completed === 0" :id="item.id" text.decode="&#xf14a;" @tap="completeItem($event)" class="nt-icon far menuIcon" width="10%"/> 
+          <Label v-else text.decode="&#xf14a;" :id="item.id" class="nt-icon fas menuIcon" width="10%" @tap="uncompleteItem($event)" /> 
+          <Label :text="item.title" :id="item.id" :name="item.title"  class="storeName" width="65%"  /> 
+          <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
+         </DockLayout> 
+             
         </v-template>
       </RadListView>
          <DockLayout  height="10%" stretchLastChild="true" >
@@ -49,8 +50,7 @@
       }
     },
     mounted() {
-      console.log('mounted items')
-     // SelectedPageService.getInstance().updateSelectedPage("Home");
+      
        http.request({
                     url: "http://10.0.2.2:8000/api/store/" + this.storeId,
                     method: "GET",
@@ -67,6 +67,60 @@
     methods: {
       onDrawerButtonTap() {
        utils.showDrawer();
+      },
+      completeItem(args){
+          console.log(args.object.id)
+
+            http.request({
+                    url: "http://10.0.2.2:8000/api/list/" + args.object.id,
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                    content: JSON.stringify({
+                            completed: 1
+                        })
+               }).then(response => {
+                    http.request({
+                    url: "http://10.0.2.2:8000/api/store/" + this.storeId,
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                }).then(response => {
+                  console.log(response)
+                    var result = response.content.toJSON();
+                    this.listOfItems = result.data;
+                }, error => {
+                    console.error(error);
+            });
+             
+                }, error => {
+                    console.error(error);
+            });
+      },
+      uncompleteItem(args){
+          console.log(args.object.id)
+
+            http.request({
+                    url: "http://10.0.2.2:8000/api/list/" + args.object.id,
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                    content: JSON.stringify({
+                            completed: 0
+                        })
+               }).then(response => {
+                    http.request({
+                    url: "http://10.0.2.2:8000/api/store/" + this.storeId,
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                }).then(response => {
+                  console.log(response)
+                    var result = response.content.toJSON();
+                    this.listOfItems = result.data;
+                }, error => {
+                    console.error(error);
+            });
+             
+                }, error => {
+                    console.error(error);
+            });
       },
       addItem(){
         

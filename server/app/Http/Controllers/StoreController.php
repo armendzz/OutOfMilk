@@ -5,6 +5,7 @@ use App\Models\Lista;
 use App\Http\Resources\ListaResources;
 use Illuminate\Http\Request;
 use App\Models\Store;
+use App\Models\User;
 use App\Http\Resources\StoreResources;
 use Illuminate\Http\Response;
 
@@ -15,12 +16,12 @@ class StoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dat = Store::all();
-        // return response($dat, 200);
 
-         return StoreResources::collection(Store::all());
+        $user = User::find($request->user()['id']);
+        $store = $user->storee()->get();
+        return StoreResources::collection($store);
     }
 
     /**
@@ -58,11 +59,13 @@ class StoreController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $user = User::find($request->user()['id']);
+        $store = $user->lista()->where('store_id','=',$id)->get(); 
+        return ListaResources::collection($store);
 
-       return ListaResources::collection(Lista::where('store_id', $id)->get());
-    }
+      }
 
     /**
      * Show the form for editing the specified resource.
@@ -84,7 +87,22 @@ class StoreController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+       
+        $store = Store::where('id', $id)->get(); //->update($request->all());
+        $match = ($store[0]['user_id'] === $request->user()['id']);
+        if($match) {
+            Store::where('id', $id)->update(['name' => $request['name']]);
+            return response()->json([
+                'message' => 'Store Name updated sucssessfully!!!',
+               
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'You Are not Authorized for this Action!!!',
+               
+            ]);
+        }
     }
 
     /**
@@ -93,8 +111,22 @@ class StoreController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $store = Store::where('id', $id)->get(); //->update($request->all());
+        $match = ($store[0]['user_id'] === $request->user()['id']);
+        if($match) {
+            Store::where('id', $id)
+        ->delete();
+        return response()->json([
+            'message' => 'Item Deleted from database succsessfully.',
+           
+        ]);
+        } else {
+            return response()->json([
+                'message' => 'You Are not Authorized for this Action!!!',
+               
+            ]);
+        }
     }
 }

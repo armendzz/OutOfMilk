@@ -73,9 +73,7 @@
             });
     },
     mounted() {
-    
-
-
+  
        SelectedPageService.getInstance().updateSelectedPage("Home");
         console.log('home mounted')
             
