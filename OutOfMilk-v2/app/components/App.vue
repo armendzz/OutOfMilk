@@ -1,10 +1,10 @@
 <template lang="html">
-    <RadSideDrawer ref="drawer" drawerLocation="Left" gesturesEnabled="true" :drawerTransition="transition">
-        <StackLayout ~drawerContent backgroundColor="#ffffff">
-            <slot name="drawerContent"/>
+    <RadSideDrawer  ref="drawer" drawerLocation="Left" gesturesEnabled="true" :drawerTransition="transition">
+        <StackLayout ~drawerContent   backgroundColor="#ffffff">
+            <slot name="drawerContent"/> 
         </StackLayout>
         <Frame ~mainContent ref="drawerMainContent">
-           <slot name="mainContent"/> 
+           <slot :name="sloti"/> 
         </Frame>
     </RadSideDrawer>
 </template>
@@ -17,14 +17,25 @@
     data() {
       return {
       transition: new SlideInOnTopTransition(),
+      sloti: '',
+      isLoggedIn: Boolean,
+      
       }
+    },
+     beforeMount() {
+      this.isLoggedIn = appSettings.hasKey('access_token');
+      console.log(this.isLoggedIn);
+      if (this.isLoggedIn == false){ 
+        this.sloti = 'loginContent' 
+        } else {
+          this.sloti = 'mainContent'
+        } 
     },
     
     mounted(){
      
     },
-
-    
+        
   }
 </script>
 

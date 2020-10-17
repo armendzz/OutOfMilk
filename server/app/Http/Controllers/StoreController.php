@@ -48,7 +48,8 @@ class StoreController extends Controller
         $store->save();
      //   Store::create($request->all());
 
-        return response(['message' => 'store created' ]);  //add ->status();
+        return response(['message' => 'store created' ]);  //add ->status(); 
+        
     }
 
     /**

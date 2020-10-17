@@ -33,10 +33,14 @@ class ListController extends Controller
      */
     public function store(Request $request)
     {
+        $list = new Lista;
+        $list->title = $request['title'];
+        $list->store_id = $request['store_id'];
+        $list->user_id = $request->user()['id'];
+        $list->save();
 
-        Lista::create($request->all());
+        return response(['message' => 'item added' ]); 
 
-        return response([])->status();
     }
 
     /**

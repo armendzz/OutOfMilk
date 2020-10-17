@@ -75,11 +75,11 @@
                         const result = response.content.toJSON();
                        appSettings.setString('access_token', result.access_token);
                        appSettings.setBoolean("isLoggedIn", true);
+                      this.$root.$refs.drawerContent.reload();
                        this.$navigateTo(Home, {})
                     }, (e) => {
                         console.log(e);
-                    });      
-               
+                    });        
         }
     }
   };

@@ -46,7 +46,10 @@
                 email: "",
 			},
       access_token: '',
-      isLoggedIn: ''
+      isLoggedIn: '',
+      une: 'unnn',
+      emaili: 'emaili jem'
+     
        }
    },
     mounted() {
@@ -69,7 +72,7 @@
         utils.closeDrawer();
       },
       logIn(){
-         httpModule.request({
+      httpModule.request({
                         url: "http://10.0.2.2:8000/api/apilogin",
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -78,13 +81,18 @@
                             password: this.user.password,
                         })
                     }).then((response) => {
-                        const result = response.content.toJSON();
+                       const result = response.content.toJSON();
                        appSettings.setString('access_token', result.access_token);
                        appSettings.setBoolean("isLoggedIn", true);
+                        this.$root.$refs.drawerContent.reload();
                        this.$navigateTo(Home, {})
                     }, (e) => {
                         console.log(e);
                     });      
+
+                   
+           
+        
       },
 
     }

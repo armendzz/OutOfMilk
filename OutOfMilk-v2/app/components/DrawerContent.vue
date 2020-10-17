@@ -35,17 +35,8 @@
                     <Label col="0" text.decode="&#xf005;" class="nt-icon fas"/>
                     <Label col="1" text="Featured" class="p-r-10"/>
                 </GridLayout>
-
-                <StackLayout class="hr"/>
-
-                <GridLayout columns="auto, *"
-                            :class="'nt-drawer__list-item' + (selectedPage === 'Settings' ? ' -selected': '')"
-                            @tap="onNavigationItemTap(Settings)">
-                    <Label col="0" text="&#xf2bb" class="fontAwesomeIconsandro"/>
-                    <Label col="1" text="Settings" class="p-r-10"/>
-                </GridLayout>
               <StackLayout class="hr"/>
-               <Button class="loginButton -primary -rounded" text="LogOut" @tap="logOut" />
+               <Button class="logoutButton -primary -rounded" text="LogOut" @tap="logOut" />
 
             </StackLayout>
         </ScrollView>
@@ -57,9 +48,9 @@
   import Browse from "./Browse";
   import Login from "./Login";
   import Featured from "./Featured";
-   import * as http from "http";
+  import * as http from "http";
+  import app from "../app.js";
   import Search from "./Search";
-  import Settings from "./Settings";
   import * as utils from "~/shared/utils";
   import SelectedPageService from "~/shared/selected-page-service";
   const appSettings = require("tns-core-modules/application-settings");
@@ -71,11 +62,10 @@
         Browse: Browse,
         Featured: Featured,
         Search: Search,
-        Settings: Settings,
         selectedPage: "",
         userName: '',
         userEmail: '',
-        access_token: ''
+        access_token: '',
       };
     },
     mounted() {
@@ -94,6 +84,7 @@
                 }, error => {
                     console.error(error);
                 });
+               console.log('u bona reload')
     },
       components: {
       Home,
@@ -101,7 +92,9 @@
       Browse,
       Featured,
       Search,
-      Settings
+    },
+    created() {
+        this.$root.$refs.drawerContent = this;
     },
     methods: {
       onNavigationItemTap(component) {
@@ -118,7 +111,24 @@
         });
         utils.closeDrawer();
       },
-    }
+      reload() {
+         this.access_token = appSettings.getString('access_token'); 
+                  http.request({
+                    url: "http://10.0.2.2:8000/api/user/",
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.userName = result.name
+                    this.userEmail = result.email                    
+                }, error => {
+                    console.error(error);
+                });
+      this.$forceUpdate();
+
+      }
+    },
+
   };
 </script>
 
@@ -128,4 +138,8 @@
     // End custom common variables
 
     // Custom styles
+
+    .logoutButton {
+      font-size: 20;
+    }
 </style>
