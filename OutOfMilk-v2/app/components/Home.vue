@@ -9,17 +9,20 @@
             <Label class="action-bar-title" text="Home"/>
         </ActionBar>
       <StackLayout orientation="vertical">
-         <ScrollView height="90%" orientation="vertical">
-        <StackLayout orientation="vertical">
         
-          <DockLayout v-for="store in listOfStores" class="store-list"  stretchLastChild="true" >
-            <Label :text="store.name" :id="store.id" :name="store.name" @tap="onStoreTap($event)" class="storeName" width="65%"  />
-            <Label text="15/34" width="20%" />
+         
+       <RadListView ref="listView" pullToRefresh="true" @pullToRefreshInitiated="onPullToRefreshInitiated" height="90%"
+                   for="store in listOfStores"
+                   @itemTap="onStoreTap"
+                   >
+        <v-template>
+         <DockLayout class="item-list"  stretchLastChild="true">
+             <Label :text="store.name" :id="store.id" :name="store.name" class="storeName" width="65%"  />
+             <Label text="15/34" width="20%" />
              <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
-          </DockLayout>
-        
-      </StackLayout>
-       </ScrollView>
+          </DockLayout> 
+        </v-template>
+      </RadListView>
       <DockLayout  stretchLastChild="true" >
              <Button dock="right" class="addStore -primary -rounded-lg" width="35%" @tap="addStore" text="+STORE" /> 
       </DockLayout>
@@ -83,15 +86,33 @@
       }
     },
     methods: {
+         onPullToRefreshInitiated ({ object }) {
+         http.request({
+                    url: "http://10.0.2.2:8000/api/store/",
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.$nextTick(() => {
+                  this.listOfStores = result.data
+                  object.notifyPullToRefreshFinished();
+                });
+             
+                }, error => {
+                    console.error(error);
+            });
+            
+
+    },
       onDrawerButtonTap() {
         utils.showDrawer();
       },
       onStoreTap(args){
-          this.$navigateTo(Items, { 
+       this.$navigateTo(Items, { 
             props: {
-                    storeId: args.object.id,
-                    storeName: args.object.name,
-            } });
+                    storeId: args.item.id,
+                    storeName: args.item.name,
+            } }); 
         utils.closeDrawer();
       },
        addStore(){

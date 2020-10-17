@@ -10,25 +10,24 @@
                         ios.position="left"/>
             <Label class="action-bar-title" :text="storeName"/>
         </ActionBar>
-        <StackLayout orientation="vertical">
-           <ScrollView height="90%" orientation="vertical"> 
         <StackLayout  orientation="vertical">
-           <DockLayout v-for="item in listOfItems" class="item-list"  stretchLastChild="true" >
-            <Label text.decode="&#xf14a;" class="nt-icon far menuIcon" width="10%"/>
+       <RadListView ref="listView" pullToRefresh="true" @pullToRefreshInitiated="onPullToRefreshInitiated" height="90%"
+                   for="item in listOfItems"
+                   @itemTap="onItemTap"
+                   >
+        <v-template>
+         <DockLayout class="item-list"  stretchLastChild="true" >
+              <Label text.decode="&#xf14a;" class="nt-icon far menuIcon" width="10%"/>
             <Label :text="item.title" :id="item.id" :name="item.title"  class="storeName" width="65%"  /> 
-            <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
-          </DockLayout> 
-
-        
-      </StackLayout>
-       </ScrollView> 
-         <DockLayout  stretchLastChild="true" >
+             <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
+              </DockLayout> 
+        </v-template>
+      </RadListView>
+         <DockLayout  height="10%" stretchLastChild="true" >
               <Button dock="right" class="addItem -primary -rounded-lg" width="35%" @tap="addItem" text="+ITEM" /> 
         </DockLayout>
        </StackLayout> 
 
-      
-       
     </Page>
 </template>
 
@@ -39,9 +38,10 @@
   const appSettings = require("tns-core-modules/application-settings");
   const httpModule = require("tns-core-modules/http");
   const dialogs = require('tns-core-modules/ui/dialogs')
+  import RadListView from 'nativescript-ui-listview/vue';
 
   export default {
-    props: ['storeId', 'storeName',],
+    props: ['storeId', 'storeName'],
      data() {
       return {
         listOfItems: [],
@@ -49,6 +49,7 @@
       }
     },
     mounted() {
+      console.log('mounted items')
      // SelectedPageService.getInstance().updateSelectedPage("Home");
        http.request({
                     url: "http://10.0.2.2:8000/api/store/" + this.storeId,
@@ -102,7 +103,27 @@
                 });
         
      
-      }
+      },
+
+      onPullToRefreshInitiated ({ object }) {
+         http.request({
+                    url: "http://10.0.2.2:8000/api/store/" + this.storeId,
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.$nextTick(() => {
+                  this.listOfItems = result.data
+                  object.notifyPullToRefreshFinished();
+                });
+             
+                }, error => {
+                    console.error(error);
+            });
+            
+
+    },
+      
     }
   };
 </script>
