@@ -24,25 +24,21 @@ class StoreController extends Controller
         $dyqanet = array();
         foreach($stores as $store){
             $i = 0;
-            $store->unCompleted = $i;
+         
 
             foreach($store['lista'] as $item) {
-                if($item['completed'] == 0){
+                if($item['completed'] == 1){
                     $store->unCompleted = $i++;
                 }
              }
+             $store->unCompleted = $i;
             array_push($dyqanet, $store);
-           
+             
         }  
-        error_log("==================================================");
-            error_log($dyqanet[0]);
-
-          // return response(['data' =>  $dyqanet]);
+     
            return  response()->json([
            'data' => $dyqanet,
-        // return StoreResources::collection($dyqanet); 
         ]);
-       // return StoreResources::collection($dyqanet); 
     }
 
     /**
@@ -149,5 +145,6 @@ class StoreController extends Controller
                
             ]);
         }
+
     }
 }

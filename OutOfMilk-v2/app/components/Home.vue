@@ -13,15 +13,15 @@
          
        <RadListView ref="listView" pullToRefresh="true" @pullToRefreshInitiated="onPullToRefreshInitiated" height="90%"
                    for="store in listOfStores"
-                   @itemTap="onStoreTap"
+                   
                    >
         <v-template>
          <DockLayout class="item-list"  stretchLastChild="true">
-             <Label :text="store.name" :id="store.id" :name="store.name" class="storeName" width="65%"  />
-             <Label :text="store.unCompleted" width="9%" />
-             <Label text="/" width="9%" />
-             <Label :text="store.lista.length" width="9%" />
-             <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
+             <Label :text="store.name" :id="store.id" :name="store.name" class="storeName" @tap="onStoreTap" width="65%"  />
+             <Label :text="store.unCompleted" width="7%" />
+             <Label text="/" class="font-si" width="5%" />
+             <Label :text="store.lista.length" width="7%" />
+             <Label text.decode="&#xf142;" :id="store.id" class="nt-icon fas menuIcon" @tap="editOrDestroy"/>
           </DockLayout> 
         </v-template>
       </RadListView>
@@ -41,6 +41,7 @@
   const appSettings = require("tns-core-modules/application-settings");
   import * as http from "http";
   const httpModule = require("tns-core-modules/http");
+  import * as Toast from 'nativescript-toast';
 
   export default {
     components: {
@@ -67,7 +68,7 @@
       console.log(this.isLoggedIn);
       if (this.isLoggedIn == false){ this.$navigateTo(Login, {})} 
 
-      http.request({
+    /*   http.request({
                     url: "http://10.0.2.2:8000/api/store",
                     method: "GET",
                     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
@@ -76,7 +77,8 @@
                     this.listOfStores = result.data;
                 }, error => {
                     console.error(error);
-            });
+            }); */
+            this.getStores()
 
       
        SelectedPageService.getInstance().updateSelectedPage("Home");
@@ -89,6 +91,18 @@
       }
     },
     methods: {
+      getStores(){
+          http.request({
+                    url: "http://10.0.2.2:8000/api/store",
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
+                }).then(response => {
+                    var result = response.content.toJSON();
+                    this.listOfStores = result.data;
+                }, error => {
+                    console.error(error);
+            });
+      },
          onPullToRefreshInitiated ({ object }) {
          http.request({
                     url: "http://10.0.2.2:8000/api/store/",
@@ -106,14 +120,60 @@
             });
 
     },
+    editOrDestroy(args){
+      action("Choose your action", "OR CANCEL", ["Edit", "Delete"])
+      .then(result => {
+        if(result == "Delete"){
+          confirm('Are You Sure')
+            .then(result => {
+              if(result == true){
+                 http.request({
+                        url: "http://10.0.2.2:8000/api/store/" + args.object.id,
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                    }).then((response) => {
+                      var result = response.content.toJSON();
+                      var toast = Toast.makeText(result.message);
+                      toast.show();
+                       this.getStores()
+                    }, (e) => {
+                    }); 
+              }
+            });
+        }
+        if(result == "Edit"){
+          prompt({
+                title: "Edit Store",
+                message: "Chose Name Of Store:",
+                okButtonText: "EDIT",
+                cancelButtonText: "Cancel",
+                defaultText: "",
+                inputType: dialogs.inputType.text
+                }).then(result => {
+                  httpModule.request({
+                        url: "http://10.0.2.2:8000/api/store/" + args.object.id,
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                        content: JSON.stringify({
+                            name: result.text
+                        })
+                    }).then((response) => {
+                      this.getStores()
+                    }, (e) => {
+                    });        
+                    
+                });
+        }
+      });
+    },
       onDrawerButtonTap() {
         utils.showDrawer();
       },
       onStoreTap(args){
        this.$navigateTo(Items, { 
             props: {
-                    storeId: args.item.id,
-                    storeName: args.item.name,
+                    storeId: args.object.id,
+                    storeName: args.object.name,
             } }); 
         utils.closeDrawer();
       },
@@ -134,7 +194,7 @@
                             name: result.text
                         })
                     }).then((response) => {
-                        http.request({
+                       /*  http.request({
                     url: "http://10.0.2.2:8000/api/store",
                     method: "GET",
                     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + this.access_token },
@@ -143,7 +203,7 @@
                     this.listOfStores = result.data;
                 }, error => {
                     console.error(error);
-            });
+            }); */ this.getStores()
                     }, (e) => {
                     });        
                     
@@ -161,6 +221,8 @@
   .addStore {
     font-size: 22;
   }
-
+  .font-si {
+    font-size: 17;
+  }
     // Custom styles
 </style>
