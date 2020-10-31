@@ -1,24 +1,21 @@
 <template>
-    <Page actionBarHidden="true">
-        <StackLayout height="100%">
-            <FlexboxLayout  height="90%" flexDirection="column">
-      
-<ListView for="store in listOfStore" @itemTap="page1BtnTap">
-  <v-template>
-    <!-- Shows the list item label in the default color and style. -->
-    <Label class="google-font" :text="store.name" />
-  </v-template>
-</ListView>
-
-        </FlexboxLayout>
-      <DockLayout height="10%" backgroundColor="#3c495e">
-            <Button id="tap" dock="right" text="+ADD STORE"  @tap="addStore" />
-        </DockLayout> 
-
-        </StackLayout>
-     
-    </Page>
-          
+    <Page>
+    <ActionBar :title="title">
+      <NavigationButton text="Back" android.systemIcon="ic_menu_back" @tap="onNavigationButtonTap"></NavigationButton>
+    </ActionBar>
+   
+  
+        <GridLayout orientation="vertical" rows="auto, *">
+          <RadListView for="item in itemList">
+            <v-template>
+              <StackLayout class="item red" orientation="vertical">
+                <Label :text="item.name + ' if template'" class="nameLabel"></Label>
+              </StackLayout>
+            </v-template>
+          </RadListView>
+        </GridLayout>
+    
+  </Page>
 
 </template>
 
@@ -27,6 +24,7 @@ import List from './List'
 const dialogs = require('tns-core-modules/ui/dialogs')
 import * as http from "http";
 const httpModule = require("tns-core-modules/http");
+import RadListView from 'nativescript-ui-listview/vue';
 
 export default {
    components: {
@@ -34,7 +32,16 @@ export default {
    },
    data() {
        return {
-           listOfStore: []
+           title: 'Multiple Templates',
+           listOfStore: [],
+            itemList: [
+        {name: 'Item 1', type: 'red'},
+        {name: 'Item 2', type: 'green'},
+        {name: 'Item 3', type: 'blue'},
+        {name: 'Item 4', type: 'red'},
+        {name: 'Item 5', type: 'green'},
+        {name: 'Item 6', type: 'blue'},
+      ],
        }
    },
      mounted() {
@@ -60,6 +67,13 @@ export default {
             });
       //   this.$navigateTo(List, { frame: "home-page"});
        },
+        templateSelector(item, index, items) {
+      return {
+        red: 'red',
+        green: 'green',
+        blue: 'blue',
+      }[item.type];
+    },
        addStore(){
             prompt({
                 title: "Add Store",
