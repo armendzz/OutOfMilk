@@ -48,6 +48,7 @@
     "nativescript-vue": "~2.8.0",
     "nativescript-vue-devtools": "^1.4.0",
     "rxjs": "^6.6.0",
+    "tns-core-modules": "^6.5.20",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -56,11 +57,10 @@
     "@nativescript/webpack": "~3.0.0",
     "babel-loader": "~8.0.0",
     "nativescript-vue-template-compiler": "~2.8.0",
-    "node-sass": "^4.7.1",
-    "vue-loader": "~15.9.3",
-    "@nativescript/android": "7.0.0",
     "nativescript-worker-loader": "~0.12.1",
-    "sass": "^1.26.10"
+    "node-sass": "^4.7.1",
+    "sass": "^1.26.10",
+    "vue-loader": "~15.9.3"
   },
   "private": "true",
   "readme": "NativeScript Application"
