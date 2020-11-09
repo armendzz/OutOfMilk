@@ -37,6 +37,15 @@ const actions = {
         console.log(response);
       });
   },
+  editItem(context, obj) {
+    axios
+      .put("http://localhost:8000/api/list/" + obj.id, {
+        title: obj.title
+      })
+      .then((response) => {
+        console.log(response);
+      });
+  },
   completeItem(context, id) {
     axios
       .put("http://localhost:8000/api/list/" + id, {

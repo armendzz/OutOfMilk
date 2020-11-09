@@ -1,7 +1,12 @@
 <template>
   <div>
     <Menu />
-    {{ $store.state.userStore.store[0].id }}
+      <v-progress-linear
+      v-if="$store.state.userStore.isFetching"
+      indeterminate
+      color="blue"
+      height="10px"
+    ></v-progress-linear>
     <v-container class="d-flex justify-center ">
       <v-card class="col-md-8 com-sm-auto" tile>
         <v-toolbar color="blue" dark class="mb-2">
@@ -97,7 +102,6 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("userStore/getStore");
   },
 };
 </script>

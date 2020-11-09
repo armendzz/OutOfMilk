@@ -4,7 +4,8 @@ import axios from "axios";
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem("user_access_token");
 
 const state = {
-    store: []
+    store: [],
+    isFetching: true,
 };
 const getters = {
 
@@ -14,10 +15,11 @@ const getters = {
       }
 };
 const actions = {
-    getStore({commit}){
+    getStore(context){
         axios.get("http://localhost:8000/api/store")
         .then( response => {
-            commit('setStore', response.data);
+            context.commit('setStore', response.data);
+            
         })
     },
 
@@ -35,6 +37,7 @@ const actions = {
 const mutations = {
     setStore( state, data){
         state.store = data.data;
+        state.isFetching = false
     },
     ADD_STORE(state, storename){
         state.store.push(storename)
