@@ -1,7 +1,7 @@
 <template lang="html">
     <RadSideDrawer  ref="drawer" drawerLocation="Left" gesturesEnabled="true" :drawerTransition="transition">
         <StackLayout ~drawerContent   backgroundColor="#ffffff">
-            <slot name="drawerContent"/> 
+      <!--       <slot name="drawerContent"/>   -->
         </StackLayout>
         <Frame ~mainContent ref="drawerMainContent">
            <slot :name="sloti"/> 

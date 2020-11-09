@@ -11,14 +11,11 @@
             <Label class="action-bar-title" :text="storeName"/>
         </ActionBar>
 
-
-
-
-       <!--  <StackLayout  orientation="vertical">
+        <StackLayout  orientation="vertical">
        <RadListView height="90%" ref="listView" pullToRefresh="true" @pullToRefreshInitiated="onPullToRefreshInitiated" 
                    for="item in listOfItems"
-                   >
-        <v-template key="Red">
+                   :groupingFunction="myGroupFunction" >
+        <v-template>
          <DockLayout class="item-list"  stretchLastChild="true" >
           <Label v-if="item.completed === 0" :id="item.id" text.decode="&#xf14a;" @tap="completeItem($event)" class="nt-icon far menuIcon" width="10%"/> 
           <Label v-else text.decode="&#xf14a;" :id="item.id" class="nt-icon fas menuIcon" width="10%" @tap="uncompleteItem($event)" /> 
@@ -26,30 +23,13 @@
           <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
          </DockLayout> 
         </v-template>
-         <v-template key="sec">
-         <DockLayout class="item-list"  stretchLastChild="true" >
-          <Label v-if="item.completed === 0" :id="item.id" text.decode="&#xf14a;" @tap="completeItem($event)" class="nt-icon far menuIcon" width="10%"/> 
-          <Label v-else text.decode="&#xf14a;" :id="item.id" class="nt-icon fas menuIcon" width="10%" @tap="uncompleteItem($event)" /> 
-          <Label :text="item.title" :id="item.id" :name="item.title"  class="storeName" width="65%"  /> 
-          <Label text.decode="&#xf142;" class="nt-icon fas menuIcon"/>
-         </DockLayout> 
-        </v-template>
-
       </RadListView>
          <DockLayout height="10%" stretchLastChild="true" >
               <Button dock="right" class="addItem -primary -rounded-lg" width="35%" @tap="addItem" text="+ITEM" /> 
         </DockLayout>
-       </StackLayout>   -->
+       </StackLayout>   
 
-        <GridLayout orientation="vertical" rows="auto, *">
-      <RadListView for="item in itemList">
-        <v-template>
-          <StackLayout if="item.type === 'red'" class="red" orientation="vertical">
-            <Label :text="item.name"></Label>
-          </StackLayout>
-        </v-template>
-      </RadListView>
-    </GridLayout>
+     
 
     </Page>
 </template>
@@ -69,14 +49,6 @@
       return {
         listOfItems: [],
         access_token: '',
-        itemList: [
-        {name: 'redddd', type: 'red'},
-        {name: 'Item 2', type: 'green'},
-        {name: 'Item 3', type: 'green'},
-        {name: 'red', type: 'red'},
-        {name: 'Item 5', type: 'green'},
-        {name: 'Item 6', type: 'green'},
-      ],
       }
     },
     mounted() {
@@ -94,7 +66,30 @@
             });
 
     },
+    created: function() {
+       http.request({
+                    url: "http://10.0.2.2:8000/api/store/" + this.storeId,
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + appSettings.getString('access_token') },
+                }).then(response => {
+                  console.log(response)
+                    var result = response.content.toJSON();
+                    this.listOfItems = result.data;
+                }, error => {
+                    console.error(error);
+            });
+    },
     methods: {
+       myGroupFunction(item) { 
+         
+         if(item.completed === 0) { 
+           return '- Get'
+            } 
+
+            return 'Completed'
+
+         },
+
       onNavigationButtonTap() {
       Frame.topmost().goBack();
     },
