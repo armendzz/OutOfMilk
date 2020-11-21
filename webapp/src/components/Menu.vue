@@ -22,18 +22,26 @@
           v-model="group"
           active-class="deep-purple--text text--accent-4"
         >
-          <v-list-item>
+         
+          <v-list-item @click="goHome">
             <v-list-item-icon>
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item>
+        
 
-          <v-list-item>
+           <v-list-item @click="goProfile">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Account</v-list-item-title>
+          </v-list-item>
+             <v-list-item @click="logOut">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>LogOut</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -48,6 +56,21 @@ export default {
       drawer: false,
       group: null,
     }),
+
+    methods: {
+      goHome(){
+        this.$router.push({ name: 'Store' })
+      },
+      goProfile(){
+        this.$router.push({ name: 'Profile' })
+      },
+      logOut(){
+        localStorage.removeItem('user_access_token')
+         this.$store.dispatch("storeItems/emptyItems");
+          this.$store.dispatch("userStore/emptyStore");
+         this.$router.push({ name: 'Login' })
+      }
+    }
 }
 </script>
 

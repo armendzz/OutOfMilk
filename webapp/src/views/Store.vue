@@ -2,6 +2,12 @@
   <div>
     <Menu />
       <v-progress-linear
+      v-if="$store.state.userStore.isupdating"
+      indeterminate
+      color="blue"
+      height="10px"
+    ></v-progress-linear>
+      <v-progress-linear
       v-if="$store.state.userStore.isFetching"
       indeterminate
       color="blue"
@@ -91,6 +97,8 @@ export default {
   methods: {
     goToItems(id) {
       this.$router.push("store/" + id);
+      this.$store.state.storeItems.isupdating = true;
+      this.$store.dispatch("storeItems/getItems", id);
     },
     addStore() {
       let store = {
@@ -102,6 +110,7 @@ export default {
     },
   },
   mounted() {
+     this.$store.dispatch("userStore/getStore");
   },
 };
 </script>

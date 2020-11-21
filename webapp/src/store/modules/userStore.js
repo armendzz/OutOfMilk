@@ -6,6 +6,8 @@ axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getIte
 const state = {
     store: [],
     isFetching: true,
+    isupdating: false,
+
 };
 const getters = {
 
@@ -24,6 +26,7 @@ const actions = {
     },
 
     addStore(context, storename){
+        state.isupdating = true;
         axios.post("http://localhost:8000/api/store", {
             name: storename.name
         }
@@ -32,15 +35,20 @@ const actions = {
             console.log(response)
         })
        
-    }
+    },
+    emptyStore({state}) {
+        state.store = []
+      },
 };
 const mutations = {
     setStore( state, data){
         state.store = data.data;
         state.isFetching = false
+        state.isupdating = false;
+
     },
-    ADD_STORE(state, storename){
-        state.store.push(storename)
+    TOGGLE_LOADING(state){
+        state.isFetching = false;
     }
 };
 

@@ -14,34 +14,7 @@ const actions = {
             commit('setUser', response.data);
         })
     },
-  // eslint-disable-next-line
-  loginUser({commit}, user) {
-    // eslint-disable-next-line
-   
-    axios
-      .post("http://localhost:8000/api/apilogin", {
-        email: user.email,
-        password: user.password,
-      })
-      .then((response) => {
-        if(response.data.message) {
-          commit('error', response.data.message)
-          
-        }
-       
-        if (response.data.access_token) {
-          localStorage.setItem("user_access_token", response.data.access_token);
-          this.$router.push('Store')
-        }
-      }).catch(function (error) {
-        let errorMessage = '';
-       if(error.response.status === 422) {
-        errorMessage = 'Please fill Email and Password'
-       }
-        commit('error', errorMessage)
-      })
-      
-  },
+
   login({commit}, credentials) {
     return new Promise((resolve, reject) => {
         axios.post("http://localhost:8000/api/apilogin", {
@@ -50,7 +23,11 @@ const actions = {
         }).then(response => {
           if (response.data.access_token) {
             localStorage.setItem("user_access_token", response.data.access_token);
+            
+            commit('setUser', response.data);
             commit('isLoggedIn', 1)
+            axios.defaults.headers.common["Authorization"] =
+  "Bearer " + localStorage.getItem("user_access_token");
             resolve(response)
           }
 
@@ -64,10 +41,7 @@ const actions = {
         })
     })
 },
-  logOut(){
-    localStorage.removeItem("user_access_token");
-    document.location = "/#/login";
-  }
+  
 };
 const mutations = {
     setUser( state, data){

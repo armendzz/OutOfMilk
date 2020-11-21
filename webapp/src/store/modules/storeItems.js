@@ -6,6 +6,7 @@ axios.defaults.headers.common["Authorization"] =
 
 const state = {
   items: [],
+  isupdating: false,
 };
 const getters = {
   completedItem(state) {
@@ -20,14 +21,18 @@ const getters = {
   },
 };
 const actions = {
+  
   getItems({ commit }, id) {
+    
     axios.get("http://localhost:8000/api/store/" + id).then((response) => {
       let result = response.data.data;
       commit("getItems", result);
+      commit('userStore/TOGGLE_LOADING', null, { root: true })
     });
   },
-
-  addItem(context, obj) {
+// eslint-disable-next-line
+  addItem({state}, obj) {
+    state.isupdating = true;
     axios
       .post("http://localhost:8000/api/list", {
         title: obj.title,
@@ -41,6 +46,14 @@ const actions = {
     axios
       .put("http://localhost:8000/api/list/" + obj.id, {
         title: obj.title
+      })
+      .then((response) => {
+        console.log(response);
+      });
+  },
+  deleteItem(context, id) {
+    axios
+      .delete("http://localhost:8000/api/list/" + id, {
       })
       .then((response) => {
         console.log(response);
@@ -64,10 +77,18 @@ const actions = {
         console.log(response);
       });
   },
+  emptyItems({state}) {
+    delete axios.defaults.headers.common["Authorization"];
+    state.items = []
+  },
 };
 const mutations = {
   getItems(state, data) {
     state.items = data;
+    state.isupdating = false;
+  },
+  EMPTY_ITEMS(state){
+    state.items = []
   },
   ADD_STORE(state, storename) {
     state.store.push(storename);

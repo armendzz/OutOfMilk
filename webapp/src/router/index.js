@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Store from "../views/Store.vue";
 import Items from "../views/Items.vue";
 import Login from "../views/Login.vue";
+import Profile from "../views/Profile.vue";
 import Register from "../views/Register.vue";
 
 
@@ -45,6 +46,15 @@ const routes = [
     path: "/store/:id",
     name: "Items",
     component: Items,
+    meta: {
+      requiresVisitor: false,
+    },
+ 
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
     meta: {
       requiresVisitor: false,
     },

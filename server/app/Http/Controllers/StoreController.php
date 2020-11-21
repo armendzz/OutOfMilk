@@ -35,7 +35,7 @@ class StoreController extends Controller
             array_push($dyqanet, $store);
              
         }  
-     
+        
            return  response()->json([
            'data' => $dyqanet,
         ]);
@@ -80,7 +80,9 @@ class StoreController extends Controller
     {
         $user = User::find($request->user()['id']);
         $store = $user->lista()->where('store_id','=',$id)->get(); 
+       
         return ListaResources::collection($store);
+        
 
       }
 

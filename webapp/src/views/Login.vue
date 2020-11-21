@@ -18,7 +18,7 @@
                 ></v-text-field>
 
                 <v-text-field
-                v-model="user.password"
+                  v-model="user.password"
                   class="ml-4 mb-2 mr-4"
                   type="password"
                   label="Password"
@@ -58,34 +58,28 @@
 
 <script>
 export default {
-  
   data: () => ({
     user: {
-      email : '',
-      password : '',
-
-    }
-  }),
-    methods: {
-    login() {
-      
-      this.$store.dispatch("currentUser/loginUser", this.user)
-        
-                  //  this.$router.push({name: "Store"})
-                 
-             
+      email: "",
+      password: "",
     },
-     login1(){
-                this.$store.dispatch("currentUser/login",{
-                    email: this.user.email,
-                    password: this.user.password,
-                }).then(response =>{
-                    this.$router.push({name: "Store"})
-                    console.log(response)
-                }).catch(function (error) {
-                  console.log(error)
-      })
-            }
+  }),
+  methods: {
+    login1() {
+      this.$store
+        .dispatch("currentUser/login", {
+          email: this.user.email,
+          password: this.user.password,
+        })
+        .then((response) => {
+          this.$router.push({ name: "Store" });
+          this.$store.dispatch("userStore/getStore");
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
   },
 };
 </script>
